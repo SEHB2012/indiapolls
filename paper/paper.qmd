@@ -14,14 +14,37 @@ bibliography: references.bib
 ---
 
 ```{r}
-#| include: false
-#| warning: false
-#| message: false
+##| include: false
+##| warning: false
+##| message: false
 #install.packages("usethis")
 #install.packages("gitcreds")
-library(usethis)
-library(gitcreds)
-create_github_token()
+#library(usethis)
+#library(gitcreds)
+#create_github_token()
+# Example dataframe with values and ranges
+data_ranges <- data.frame(
+  category = c("A", "B", "C", "D"),
+  value = c(100, 150, 200, 250),
+  range = c(10, 15, 20, 25)  # Example range values
+)
+
+# Calculate upper and lower bounds for plotting
+data_ranges$lower <- data_ranges$value - data_ranges$range
+data_ranges$upper <- data_ranges$value + data_ranges$range
+
+# Print the dataframe
+print("Data with Ranges:")
+print(data_ranges)
+# Load necessary library
+library(ggplot2)
+
+# Create the plot
+ggplot(data_ranges, aes(x = category, y = value)) +
+  geom_point() +  # Plot points for values
+  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2) +  # Error bars for ranges
+  labs(title = "Values with Ranges", x = "Category", y = "Value") +
+  theme_minimal()
 
 
 

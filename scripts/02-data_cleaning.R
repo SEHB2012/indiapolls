@@ -1,11 +1,9 @@
 #### Preamble ####
-# Purpose: Cleans the raw plane data recorded by two observers..... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 6 April 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Cleans the data by removing unecessary columns, rows and changing data types
+# Author: Sehar Bajwa
+# Date: 20 June 2024 
+# Contact: sehar.bajwa@mail.utoronto.ca          
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
 
 #### Workspace setup ####
 # Load required libraries
@@ -42,6 +40,9 @@ clean_opinion_poll <- clean_opinion_poll[-1, ]
 #changing data types
 clean_opinion_poll$`Exact date published` <- as.Date(clean_opinion_poll$`Exact date published`)
 clean_opinion_poll$`NDA` <- as.numeric(clean_opinion_poll$`NDA`)
+clean_opinion_poll$`INDIA` <- as.numeric(clean_opinion_poll$`INDIA`)
+clean_opinion_poll$`Others` <- as.numeric(clean_opinion_poll$`Others`)
+
 print(clean_opinion_poll)
 
 # Save the cleaned data to a new CSV file
@@ -63,6 +64,8 @@ clean_exit_poll$INDIA <- clean_and_convert(clean_exit_poll$INDIA)
 clean_exit_poll$Others <- clean_and_convert(clean_exit_poll$Others)
 clean_exit_poll$Lead <- clean_and_convert(clean_exit_poll$Lead)
 
+clean_exit_poll <- clean_exit_poll %>% 
+  select(-Lead)
 
 print(clean_exit_poll)
 # Save the cleaned data to a new CSV file

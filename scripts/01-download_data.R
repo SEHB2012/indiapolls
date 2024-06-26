@@ -1,34 +1,15 @@
 #### Preamble ####
-# Purpose: Downloads and saves the data from [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Downloads the required data using rvest from Wikipedia
+# Author: Sehar Bajwa
+# Date: 20 June 2024 
+# Contact: sehar.bajwa@mail.utoronto.ca          
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
 
 
 # Load required libraries
 library(rvest)
 library(readr)
-#install.packages("tidyverse")
 library(tidyverse)
-library(babynames)
-library(gh)
-library(here)
-library(httr)
-library(janitor)
-library(jsonlite)
-library(knitr)
-library(lubridate)
-library(pdftools)
-library(purrr)
-library(rvest)
-library(spotifyr)
-library(tesseract)
-library(tidyverse)
-library(usethis)
-library(xml2)
 
 # Read the HTML content from the Wikipedia page
 the_raw_data <- read_html("https://en.wikipedia.org/wiki/Opinion_polling_for_the_2024_Indian_general_election")
@@ -43,11 +24,11 @@ the_raw_data <- read_html("https://en.wikipedia.org/wiki/Opinion_polling_for_the
  # Check the number of tables extracted
  length(tables)
  
- # Extract the second table (if it exists)
+ # Extract the opinion table (if it exists)
  if (length(tables) >= 2) {
    raw_opinion_poll <- tables[2] %>% html_table()
  } else {
-   stop("The second table does not exist on the page.")
+   stop("The opinion table does not exist on the page.")
  }
  
  # Convert the extracted table to a data frame
@@ -71,11 +52,11 @@ the_raw_data <- read_html("https://en.wikipedia.org/wiki/Opinion_polling_for_the
  # Check the number of tables extracted
  length(tables)
  
- # Extract the second table (if it exists)
+ # Extract the exit table (if it exists)
  if (length(tables) >= 76) {
    raw_exit_poll <- tables[76] %>% html_table()
  } else {
-   stop("The second table does not exist on the page.")
+   stop("The exit table does not exist on the page.")
  }
  
  # Convert the extracted table to a data frame
@@ -89,5 +70,5 @@ the_raw_data <- read_html("https://en.wikipedia.org/wiki/Opinion_polling_for_the
    x = raw_exit_poll_df,
    file = "/cloud/project/data/raw_data/raw_exit_poll.csv"
  )
- 
+
  

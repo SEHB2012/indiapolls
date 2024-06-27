@@ -9,6 +9,7 @@ date: today
 date-format: long
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
 format: pdf
+prefer-html: true
 number-sections: true
 bibliography: references.bib
 ---
@@ -56,191 +57,128 @@ library(palmerpenguins)
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. We use @citeR and @rohan.
-sdfdslfkjsdl
-The remainder of this paper is structured as follows. @sec-data....
+In the biggest democratic election the world has ever seen, India held its general election in 2024 over 7 successive phases, beginning on the 19th of April and ending on the 1st of June. The election determined the composition of the Lok Sabha, the lower house of India's Parliament, which comprises 543 seats. A party or coalition needs a minimum of 272 seats to form a government.
+
+During the election period, numerous exit and opinion polls were conducted to gauge public sentiment and predict the potential outcome. Opinion polls were conducted in the months leading up to the election, providing insights into voter preferences and trends. Exit polls were conducted immediately after voters cast their ballots, offering a snapshot of the electorate's choices.
+
+The results of these polls were keenly watched by political analysts, parties, and the public, as they provided an early indication of which party or coalition might secure a majority in the Lok Sabha. Despite their limitations and varying degrees of accuracy, these polls played a crucial role in shaping the narrative and expectations surrounding the 2024 Indian general election.
 
 
 
 # Data {#sec-data}
 
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
+The data used in this paper is obtained by scraping the Wikipedia page for 'general elections in India 2024', and cross-referenced with each article it mentioned. There seems to be no singular database to collect all pre-election and exit poll data, and this is part of the gaping problem examined in this paper. The data points are determined from several National and local newspapers that have published the news online.
+
+While nothing except the results themselves, possible margins, and the sample sizes for the opinion polls are available online, and when one follows links to the actual research/polling agency hired by the news outlets, there are no publicly available reports available on their websites either. 
+
+The three data sets I will be using are Opinion Poll data, Exit Poll data and Mood of the Nation (CVoter).
+
+
+## Opinion Poll data 
+
+In the run-up to the 2024 General Election, various newspapers and agencies conduct pre-election polls to gauge the mindset, mood, and political leaning of the average voter. These polls provide valuable insights into public opinion, allowing political analysts, parties, and the general public to understand potential election outcomes better. They help identify trends, shifts in voter preferences, and the impact of current events and policies on voter behavior.
+
+Containing data from January 2023 up to April 2024, this data consists of the following 7 variables: name of the polling agency, sample size, seats won by NDA, INDIA, and Others. Additionally, the 'Exact' date published is a self-created variable after scouring the references, so a more accurate dataset can be made, and the overlap in a line graph can be avoided. A snapshot of the cleaned data is provided below, which includes the 7 variables and 17 data points in total. 
+
+
 
 ```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
-#| echo: false
-
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
-
-Talk more about it.
-
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
-
-```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
-#| echo: false
+#| include: false
 #| warning: false
 #| message: false
 
-analysis_data <- read_csv(here::here("data/analysis_data/analysis_data.csv"))
+#### Initialize quarto workspace by reading csv's ####
+library(tidyverse)
+library(here)
+library(readr)
+library(ggplot2)
 
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
-  theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
-```
+cleaned_opinion_polldata <- read_csv(here::here("/cloud/project/data/analysis_data/cleaned_opinion_poll.csv"))
+cleaned_exit_polldata <- read_csv(here::here("/cloud/project/data/analysis_data/cleaned_exit_poll.csv"))
 
-Talk way more about it. 
-
-
-
-# Model
-
-The goal of our modelling strategy is twofold. Firstly,...
-
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
-
-## Model set-up
-
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
-
-\begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
-\end{align}
-
-We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
-
-
-### Model justification
-
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
-
-We can use maths by including latex between dollar signs, for instance $\theta$.
-
-
-# Results
-
-Our results are summarized in @tbl-modelresults.
-
-```{r}
-#| echo: false
-#| eval: true
-#| warning: false
-#| message: false
-
-library(rstanarm)
-
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
 ```
 
 ```{r}
 #| echo: false
-#| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
 #| warning: false
+#| label: tbl-dataa
+#| tbl-cap: "A summary atable of cleaned data"
+#install.packages("knitr")
+#install.packages("kableExtra")
+library(kableExtra)
+library(knitr)
+kable(cleaned_opinion_polldata, padding = 2)%>%
+  kable_styling(font_size = 8) %>%
+  column_spec(1, width = "3cm") %>%
+  column_spec(2, width = "2cm") %>%
+  column_spec(3, width = "2cm") %>%
+  column_spec(4, width = "2cm") %>%
+  column_spec(5, width = "1.5cm") %>%
+  column_spec(6, width = "1.5cm") %>%
+  column_spec(7, width = "1.5cm")
 
-modelsummary::modelsummary(
-  list(
-    "First model" = first_model
-  ),
-  statistic = "mad",
-  fmt = 2
-)
 ```
 
+## Mood of the Nation data
 
+Conducted by National Newshouse India Today, the CVoter opinion poll utilizes Computer Assisted Telephone Interviewing among voters aged 18 and above across all 543 Lok Sabha seats. Targeting a sample of 30,000 per quarter with an average response rate of 55%, the tracker is conducted weekly in 11 national languages. According to the official site, CVoter employs a Standard Resilient Distributed dataset to randomly select numbers across telecom lines, ensuring a representative analysis through statistical weighting of the data to reflect the local population as per the latest Census figures. The data is weighted to align with known census profiles, including gender, age, education, income, religion, caste, urban/rural distribution, and past vote recall for the Lok Sabha and Vidhan Sabha elections. For analytics, CVoter uses a proprietary algorithm to calculate provincial and regional vote shares based on the split-voter phenomenon.
 
-
-# Discussion
-
-## First discussion point {#sec-first-point}
-
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
-
-## Second discussion point
-
-## Third discussion point
-
-## Weaknesses and next steps
-
-Weaknesses and next steps should also be included.
-
-\newpage
-
-\appendix
-
-# Appendix {-}
-
-
-# Additional data details
-
-# Model details {#sec-model-details}
-
-## Posterior predictive check
-
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
-
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
-
-```{r}
-#| eval: true
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-ppcheckandposteriorvsprior
-#| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
-
-pp_check(first_model) +
-  theme_classic() +
-  theme(legend.position = "bottom")
-
-posterior_vs_prior(first_model) +
-  theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
-  theme(legend.position = "bottom") +
-  coord_flip()
-```
-
-## Diagnostics
-
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
-
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
+The CVoter data offers the most consistent output for opinion polls in India and has been selected due to its standardization and regularity. This consistency allows for the assumption that all other variables are controlled, enabling a focused analysis of trends. The dataset has been independently constructed by aggregating infographics and articles published on the India Today website. The included dataset only has 5 variables, the month, and NDA, INDIA and Others Seats. A snapshot is provided below.
 
 ```{r}
 #| echo: false
-#| eval: true
-#| message: false
 #| warning: false
-#| label: fig-stanareyouokay
-#| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", "Rhat plot"]
-#| layout-ncol: 2
+#| label: tbl-MOTNData
+#| tbl-cap: "A summary table of cleaned data"
 
-plot(first_model, "trace")
+#install.packages("kableExtra")
+#library(knitr)
+#library(kableExtra)
 
-plot(first_model, "rhat")
+# Create a new data frame with the specified data points
+#MOTN_data <- data.frame(
+ # Month = c("Jan 2020", "Aug 2020", "Jan 2021", "Aug 2021", "Jan 2022", "Aug 2022", "Jan 2023", "Aug 2023"),
+  #NDA = c(303, 316, 321, 298, 296, 307, 298, 306),
+#  INDIA = c(132, 134, 129, 140, 120, 11, 92, 44),
+ # Others = c(108, 93, 93, 105, 127, 125, 153, 193)
+#)
+
+# Present the data frame using kable with customized formatting
+#kable(MOTN_data, format = "html") %>%
+#  kable_styling(font_size = 12) %>%
+#  column_spec(1, width = "3cm") %>%
+#  column_spec(2, width = "2cm") %>%
+ # column_spec(3, width = "2cm") %>%
+ # column_spec(4, width = "2cm")
 ```
+
+## Exit poll data
+
+The inception of exit polls in India traces back to 1957, during the second Lok Sabha elections, with the pioneering initiative led by the Indian Institute of Public Opinion.
+
+Exit polls, as the name suggests, are conducted after the culmination of the last phase of voting, in accordance with the guidelines set by the Election Commission of India. Distinguished from opinion polls, which precede elections, exit polls involve surveys administered to voters as they exit polling stations post casting their ballots. These surveys encompass a spectrum of inquiries, delving into voter motivations and party preferences.. As the 2024 Lok Sabha elections concluded, exit poll results for 28 states and eight union territories were slated for release from 6:30 pm onwards on June 1 2024, in compliance with Election Commission protocols.
+
+In contrast to opinion polls, exit polls are often conducted and released hastily on the same day, rendering the timing irrelevant. Moreover, these exit polls have not disclosed the sample size of the respondents surveyed. As a result, they are presented here merely as indicators, highlighting their potential for inaccuracy and inflation. There are 4 variables, the name of the agency, and the number of seats predicted each for NDA, INDIA and others. The 15 datapoints have been scraped from Wikipedia using rvest. 
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-data
+#| tbl-cap: "A summary table of cleaned data"
+#install.packages("knitr")
+#install.packages("kableExtra")
+library(kableExtra)
+library(knitr)
+kable(cleaned_exit_polldata, padding = 2)%>%
+  kable_styling(font_size = 8) %>%
+  column_spec(1, width = "3cm") %>%
+  column_spec(2, width = "2cm") %>%
+  column_spec(3, width = "2cm") %>%
+  column_spec(4, width = "2cm") 
+
+```
+
+
 
 
 

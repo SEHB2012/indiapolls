@@ -2,8 +2,7 @@
 title: "My title"
 subtitle: "My subtitle if needed"
 author: 
-  - First author
-  - Another author
+  - Sehar Bajwa
 thanks: "Code and data are available at: LINK."
 date: today
 date-format: long
@@ -15,9 +14,9 @@ bibliography: references.bib
 ---
 
 ```{r}
-##| include: false
-##| warning: false
-##| message: false
+#| include: false
+#| warning: false
+#| message: false
 #install.packages("usethis")
 #install.packages("gitcreds")
 #library(usethis)
@@ -63,6 +62,15 @@ During the election period, numerous exit and opinion polls were conducted to ga
 
 The results of these polls were keenly watched by political analysts, parties, and the public, as they provided an early indication of which party or coalition might secure a majority in the Lok Sabha. Despite their limitations and varying degrees of accuracy, these polls played a crucial role in shaping the narrative and expectations surrounding the 2024 Indian general election.
 
+# Background  {#sec-background}
+
+Before delving into the following sections of the paper, it is important to provide some political context. 
+The National Democratic Alliance (NDA), led by the Bharatiya Janata Party (BJP), has been a significant political force in India since its formation in the late 1990s, particularly under Prime Minister Narendra Modi, who assumed office in 2014 and was re-elected in 2019.
+In 2023, the Indian National Developmental Inclusive Alliance (INDIA) was established, comprising major opposition parties from across the political spectrum, including the Indian National Congress (INC), the Dravida Munnetra Kazhagam (DMK), and the Trinamool Congress (TMC). This coalition, headed by Rahul Gandhi of the INC, was formed to present a united front against the BJP's dominance, driven by concerns over Modi's prolonged tenure. The INDIA Alliance's collaboration aimed to make a dent in the NDA's mammoth vote bank by consolidating votes and pooling in resources. And they did achieve the goal of inhibiting the NDA's expected landslide victory (353 seats in 2019). The slogans of '400 paar' (crossing 400 seats) by the NDA this time around were paid a lot of heed, and INDIA's alliance was underestimated by the opinion polls, and perhaps falsely represented by the exit polls.
+
+The newshouses received a lot of flak for the inflation of the exit poll numbers in particular, nfluenced by the BJP's past electoral success and media narrative. In addition to misleading the public, they led to the worst stock market crash in the country in the past 4 years.The term "godi media" colloquially describes Indian media outlets perceived as biased towards the BJP, often criticized for their lack of independent journalism.
+
+Consequently, the analysis in this paper will focus on the National Democratic Alliance (NDA) because of the central role it played in the 2024 Indian general election. With Prime Minister Narendra Modi seeking a third consecutive term, the election was largely seen as a referendum on his leadership and the performance of his Bharatiya Janata Party (BJP). The political discourse and public sentiment were heavily polarized around the NDA, with debates and predictions revolving around whether Modi and the BJP could maintain their stronghold on Indian politics. Consequently, all bets and polls were discussions around the electoral landscape being pro or anti-NDA, instead of being pro INDIA or pro Independent candidates.
 
 
 # Data {#sec-data}
@@ -95,6 +103,8 @@ library(ggplot2)
 
 cleaned_opinion_polldata <- read_csv(here::here("/cloud/project/data/analysis_data/cleaned_opinion_poll.csv"))
 cleaned_exit_polldata <- read_csv(here::here("/cloud/project/data/analysis_data/cleaned_exit_poll.csv"))
+MOTN_polldata <- read_csv(here::here("/cloud/project/data/raw_data/MOTN.csv"))
+
 
 ```
 
@@ -128,28 +138,20 @@ The CVoter data offers the most consistent output for opinion polls in India and
 ```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-MOTNData
+#| label: tbl-dDAata
 #| tbl-cap: "A summary table of cleaned data"
-
+#install.packages("knitr")
 #install.packages("kableExtra")
-#library(knitr)
-#library(kableExtra)
+library(kableExtra)
+library(knitr)
+kable(MOTN_polldata, padding = 2)%>%
+  kable_styling(font_size = 8) %>%
+  column_spec(1, width = "3cm") %>%
+  column_spec(2, width = "2cm") %>%
+  column_spec(3, width = "2cm") %>%
+  column_spec(4, width = "2cm") 
 
-# Create a new data frame with the specified data points
-#MOTN_data <- data.frame(
- # Month = c("Jan 2020", "Aug 2020", "Jan 2021", "Aug 2021", "Jan 2022", "Aug 2022", "Jan 2023", "Aug 2023"),
-  #NDA = c(303, 316, 321, 298, 296, 307, 298, 306),
-#  INDIA = c(132, 134, 129, 140, 120, 11, 92, 44),
- # Others = c(108, 93, 93, 105, 127, 125, 153, 193)
-#)
 
-# Present the data frame using kable with customized formatting
-#kable(MOTN_data, format = "html") %>%
-#  kable_styling(font_size = 12) %>%
-#  column_spec(1, width = "3cm") %>%
-#  column_spec(2, width = "2cm") %>%
- # column_spec(3, width = "2cm") %>%
- # column_spec(4, width = "2cm")
 ```
 
 ## Exit poll data

@@ -65,8 +65,8 @@ The results of these polls were keenly watched by political analysts, parties, a
 # Background  {#sec-background}
 
 Before delving into the following sections of the paper, it is important to provide some political context. 
-The National Democratic Alliance (NDA), led by the Bharatiya Janata Party (BJP), has been a significant political force in India since its formation in the late 1990s, particularly under Prime Minister Narendra Modi, who assumed office in 2014 and was re-elected in 2019.
-In 2023, the Indian National Developmental Inclusive Alliance (INDIA) was established, comprising major opposition parties from across the political spectrum, including the Indian National Congress (INC), the Dravida Munnetra Kazhagam (DMK), and the Trinamool Congress (TMC). This coalition, headed by Rahul Gandhi of the INC, was formed to present a united front against the BJP's dominance, driven by concerns over Modi's prolonged tenure. The INDIA Alliance's collaboration aimed to make a dent in the NDA's mammoth vote bank by consolidating votes and pooling in resources. And they did achieve the goal of inhibiting the NDA's expected landslide victory (353 seats in 2019). The slogans of '400 paar' (crossing 400 seats) by the NDA this time around were paid a lot of heed, and INDIA's alliance was underestimated by the opinion polls, and perhaps falsely represented by the exit polls.
+The National Democratic Alliance (NDA) is a centre-right to right wing political alliance, led by the Bharatiya Janata Party (BJP), and has been a significant political force in India since its formation in the late 1990s, particularly under Prime Minister Narendra Modi, who assumed office in 2014 and was re-elected in 2019.
+In 2023, the Indian National Developmental Inclusive Alliance (INDIA) was established, comprising major opposition parties from across the political spectrum, including the Indian National Congress (INC), the Dravida Munnetra Kazhagam (DMK), and the Trinamool Congress (TMC). This centre-left to left wing coalition, headed by Rahul Gandhi of the INC, was formed to present a united front against the BJP's dominance, driven by concerns over Modi's prolonged tenure. The INDIA Alliance's collaboration aimed to make a dent in the NDA's mammoth vote bank by consolidating votes and pooling in resources. And they did achieve the goal of inhibiting the NDA's expected landslide victory (353 seats in 2019). The slogans of '400 paar' (crossing 400 seats) by the NDA this time around were paid a lot of heed, and INDIA's alliance was underestimated by the opinion polls, and perhaps falsely represented by the exit polls.
 
 The newshouses received a lot of flak for the inflation of the exit poll numbers in particular, nfluenced by the BJP's past electoral success and media narrative. In addition to misleading the public, they led to the worst stock market crash in the country in the past 4 years.The term "godi media" colloquially describes Indian media outlets perceived as biased towards the BJP, often criticized for their lack of independent journalism.
 
@@ -77,7 +77,7 @@ Consequently, the analysis in this paper will focus on the National Democratic A
 
 The data used in this paper is obtained by scraping the Wikipedia page for 'general elections in India 2024', and cross-referenced with each article it mentioned. There seems to be no singular database to collect all pre-election and exit poll data, and this is part of the gaping problem examined in this paper. The data points are determined from several National and local newspapers that have published the news online.
 
-While nothing except the results themselves, possible margins, and the sample sizes for the opinion polls are available online, and when one follows links to the actual research/polling agency hired by the news outlets, there are no publicly available reports available on their websites either. 
+While the results, possible margins, and sample sizes for opinion polls are available online, detailed reports from the research or polling agencies hired by news outlets are not publicly accessible on their websites.
 
 The three data sets I will be using are Opinion Poll data, Exit Poll data and Mood of the Nation (CVoter).
 
@@ -166,7 +166,7 @@ In contrast to opinion polls, exit polls are often conducted and released hastil
 #| echo: false
 #| warning: false
 #| label: tbl-data
-#| tbl-cap: "A summary table of cleaned data"
+#| tbl-cap: "A summary table of dsdasa data"
 #install.packages("knitr")
 #install.packages("kableExtra")
 library(kableExtra)
@@ -180,8 +180,201 @@ kable(cleaned_exit_polldata, padding = 2)%>%
 
 ```
 
+# Model 
+
+The following section features line graphs and simple linear regression models to provide a closer look at each of the datasets in turn.
+
+## Opinion poll data 
+
+By isolating all three party coalitions, the it is easier to notice trends in the seat projections in the months leading up to the election. 
+Particularly for the NDA, the projections become more skewed and the confirmation bias  
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: fig-opinionpoll
+#| fig-cap: "Opinion poll Seat Projections"
+#| fig-subcap: ["NDA Projections", "INDIA Projections", "Others Projections"]
+#| layout-ncol: 2
 
 
+# Load necessary libraries
+library(tidyverse)
+library(arrow)
+library(ggplot2)
+library(gridExtra)
+
+# Step 2: Save the data as a Parquet file
+opinionpoll_parquet <- "/cloud/project/data/analysis_data/cleaned_opinion_poll.parquet"
+write_parquet(cleaned_opinion_polldata, opinionpoll_parquet)
+
+# Step 3: Sort the data by 'Exact date' in descending order
+opinion_poll_sorted <- cleaned_opinion_polldata %>%
+  arrange(desc(Exact))
+
+# Step 4: Create a line graph for NDA
+plot1 <- ggplot(opinion_poll_sorted, aes(x = as.Date(Exact), y = NDA)) +
+  geom_line(color = "blue") +
+  geom_hline(yintercept = 293, linetype = "dashed", color = "orange") +
+  annotate("text", x = as.Date("2024-01-01"), y = 300, label = "Actual NDA seats", color = "orange") +
+  labs(x = "Date of publication", y = "NDA Seats", title = "Opinion poll-NDA Seat Projections") +
+  theme_minimal()
+print(plot1)
+
+# Step 4: Create a line graph for INDIA
+plot2 <- ggplot(opinion_poll_sorted, aes(x = as.Date(Exact), y = INDIA)) +
+  geom_line(color = "blue") +
+  geom_hline(yintercept = 234, linetype = "dashed", color = "lightblue") +
+  annotate("text", x = as.Date("2024-01-01"), y = 240, label = "Actual INDIA seats", color = "lightblue") +
+  labs(x = "Date of publication", y = "INDIA Seats", title = "Opinion poll-INDIA Seat Projections") +
+  theme_minimal()
+print(plot2)
+
+
+# Step 4: Create a line graph for Others
+plot3 <- ggplot(opinion_poll_sorted, aes(x = as.Date(Exact), y = Others)) +
+  geom_line(color = "blue") +
+  geom_hline(yintercept = 16, linetype = "dashed", color = "green") +
+  annotate("text", x = as.Date("2024-01-01"), y = 25, label = "Actual Others seats", color = "green") +
+  labs(x = "Date of publication", y = "Others Seats", title = "Opinion poll-Others Seat Projections") +
+  theme_minimal()
+
+print(plot3)
+```
+
+
+## Mood of the Nation
+
+By controlling for variables such as sample size and methods of questioning (presented in section 1.2), the popularity and public opinion of the governing party can be examined in isolation. While the Mood of the Nation data does not follow a noticeable trend other than sloping upwards, the lowest points of the graph coincide with significant challenges during the ruling party's tenure. This is particularly evident from August 2021 to January 2022, where seat projections hit record lows around 296. Notably, this period aligns with the second wave of the Covid-19 pandemic, which severely overwhelmed India's healthcare system, leading to deficits in hospitals, medicines, and oxygen cylinders.
+
+The pandemic exacerbated existing economic issues, such as high unemployment rates and a marked slowdown in economic activity. Rising inflation rates further complicated the situation, and in the first quarter of 2021, India experienced a 'mild' recession, with GDP dropping by a record 24%. Additionally, widespread dissatisfaction with the Farm Bills led to high-profile protests across the country, impacting India’s agriculture-dominant economy.
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: fig-opienionpoll
+#| fig-cap: "Opinion poll Seat Projections"
+
+# Read the CSV file
+motngraph_data <- read_csv("/cloud/project/data/raw_data/MOTN.csv")
+
+# Convert the Month column from character to date format
+motngraph_data <- motngraph_data %>%
+  mutate(Month = as.Date(paste("01", Month, sep = "-"), format = "%d-%b-%y"))
+
+# Save the dataframe as a Parquet file
+write_parquet(motngraph_data, "/cloud/project/data/analysis_data/MOTN.parquet")
+
+# Create a line plot for NDA seats over time
+plot_motn <- ggplot(motngraph_data, aes(x = Month, y = NDA)) +
+  geom_line(color = "blue") +
+  geom_point() +
+  geom_text(aes(label = NDA), vjust = -0.5, color = "black", size = 3) +
+  labs(x = "Month", y = "NDA Seats", title = "NDA Seats Over Time") +
+  theme_minimal() +
+  geom_hline(yintercept = 293, linetype = "dashed", color = "red") +
+  annotate("text", x = as.Date("2023-01-01"), y = 295, label = "Actual NDA seats", color = "red") +
+  scale_x_date(date_labels = "%b %Y") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+# Print the plot
+print(plot_motn)
+
+
+```
+
+
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: fig-oprrinionpoll
+#| fig-cap: "Opinion poll Seat Projections"
+#| #| fig-subcap: ["NDA Projections", "INDIA Projections"]
+#| layout-ncol: 2
+
+
+opinion_lm <- read_csv("/cloud/project/data/analysis_data/cleaned_opinion_poll.csv")
+
+
+# Fit a linear regression model
+lm_model <- lm(NDA ~ `Sample size`, data = opinion_lm)
+
+# Print summary of the linear model
+summary(lm_model)
+
+# Extract coefficients and their statistics
+summary_table <- summary(lm_model)$coefficients %>%
+  as.data.frame() %>%
+  rownames_to_column(var = "Coefficient") %>%
+  rename(estimate = Estimate, std_error = `Std. Error`, t_value = `t value`, p_value = `Pr(>|t|)`)
+
+# Print the summary table
+print(summary_table)
+
+# Check if the relationship is statistically significant (p-value < 0.05)
+p_value <- summary(lm_model)$coefficients["`Sample size`", "Pr(>|t|)"]
+if (!is.na(p_value) && p_value < 0.05) {
+  cat("The relationship between Sample size and NDA seats is statistically significant (p < 0.05).\n")
+} else {
+  cat("The relationship between Sample size and NDA seats is not statistically significant (p >= 0.05).\n")
+}
+
+# Plot scatter plot with regression line
+plot_opinion_poll <- ggplot(opinion_lm, aes(x = `Sample size`, y = NDA)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  geom_hline(yintercept = 293, linetype = "dashed", color = "red") +
+  annotate("text", x = 1000000, y = 300, label = "Actual NDA seats", color = "red") +
+  labs(x = "Sample Size", y = "NDA Seats", title = "Sample Size vs. NDA Seats with Linear Regression") +
+  theme_minimal()
+
+# Print the plot
+print(plot_opinion_poll)
+
+filteredopinion_lm <- read_csv("/cloud/project/data/analysis_data/cleaned_opinion_poll.csv")
+
+# Filter out rows where Sample size is 2500000
+opinion_poll_filtered <- filteredopinion_lm %>%
+  filter(`Sample size` != 2500000)
+
+# Fit a linear regression model
+lm_model <- lm(NDA ~ `Sample size`, data = opinion_poll_filtered)
+
+# Print summary of the linear model
+summary(lm_model)
+
+# Extract coefficients and their statistics
+summary_table <- summary(lm_model)$coefficients %>%
+  as.data.frame() %>%
+  rownames_to_column(var = "Coefficient") %>%
+  rename(estimate = Estimate, std_error = `Std. Error`, t_value = `t value`, p_value = `Pr(>|t|)`)
+
+# Print the summary table
+print(summary_table)
+
+# Check if the relationship is statistically significant (p-value < 0.05)
+p_value <- summary(lm_model)$coefficients["`Sample size`", "Pr(>|t|)"]
+if (!is.na(p_value) && p_value < 0.05) {
+  cat("The relationship between Sample size and NDA seats is statistically significant (p < 0.05).\n")
+} else {
+  cat("The relationship between Sample size and NDA seats is not statistically significant (p >= 0.05).\n")
+}
+
+# Plot scatter plot with regression line (excluding Sample size == 2500000)
+plot_opinion_poll_filtered <- ggplot(opinion_poll_filtered, aes(x = `Sample size`, y = NDA)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  geom_hline(yintercept = 293, linetype = "dashed", color = "red") +
+  annotate("text", x = 100000, y = 300, label = "Actual NDA seats", color = "red") +
+  labs(x = "Sample Size", y = "NDA Seats", title = "Sample Size vs. NDA Seats (Excluding 2500000)") +
+  theme_minimal()
+
+# Print the plot
+print(plot_opinion_poll_filtered)
+```
 
 
 \newpage
